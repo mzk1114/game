@@ -126,13 +126,32 @@ function showQuestion() {
 
 function checkAnswer(choice) {
   const resultDiv = document.getElementById("result");
+  const correctAnswer = questions[current].answer;
 
-  if (choice === questions[current].answer) {
+  if (choice === correctAnswer) {
     score++;
-    resultDiv.textContent = "⭕";
+    resultDiv.textContent = "⭕ 正解！";
     resultDiv.className = "correct";
     correctSound.play();
   } else {
+    resultDiv.textContent = "❌ 不正解（正解：" + correctAnswer + "）";
+    resultDiv.className = "wrong";
+    wrongSound.play();
+  }
+
+  document.getElementById("score").textContent = "スコア: " + score;
+
+  current++;
+
+  if (current < questions.length) {
+    setTimeout(showQuestion, 1200);
+  } else {
+    setTimeout(() => {
+      document.getElementById("question").textContent = "終了！";
+      document.getElementById("choices").innerHTML = "";
+    }, 1200);
+  }
+} else {
     resultDiv.textContent = "❌";
     resultDiv.className = "wrong";
     wrongSound.play();
