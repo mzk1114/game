@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>歴史単語ゲーム</title>
+<title>歴史単語ゲーム（強化版）</title>
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -41,9 +41,14 @@ button.choice {
   color: white;
 }
 
-button.choice:hover {
-  background: #2980b9;
+#result {
+  font-size: 40px;
+  margin: 20px;
+  height: 50px;
 }
+
+.correct { color: green; }
+.wrong { color: red; }
 
 #score {
   margin-top: 20px;
@@ -63,46 +68,39 @@ button.choice:hover {
 </head>
 <body>
 
-<h1>📚 高1 歴史単語ゲーム</h1>
+<h1>📚 高1 歴史単語ゲーム（強化版）</h1>
 
 <div id="game">
   <div id="question">スタートを押してね！</div>
   <div id="choices"></div>
+  <div id="result"></div>
   <button id="startBtn" onclick="startGame()">スタート</button>
   <div id="score">スコア: 0</div>
 </div>
 
+<!-- 効果音 -->
+<audio id="correctSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4017c1a5a4.mp3"></audio>
+<audio id="wrongSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c2c7e9b4b5.mp3"></audio>
+
 <script>
 const questions = [
-  {
-    q: "鎌倉幕府を開いた人物は？",
-    choices: ["源頼朝", "織田信長", "徳川家康", "足利尊氏"],
-    answer: "源頼朝"
-  },
-  {
-    q: "大化の改新が始まった年は？",
-    choices: ["645年", "710年", "794年", "1192年"],
-    answer: "645年"
-  },
-  {
-    q: "江戸幕府を開いたのは？",
-    choices: ["徳川家康", "豊臣秀吉", "源義経", "足利義満"],
-    answer: "徳川家康"
-  },
-  {
-    q: "平安京に都を移した天皇は？",
-    choices: ["桓武天皇", "聖武天皇", "天武天皇", "後醍醐天皇"],
-    answer: "桓武天皇"
-  }
+  { q: "墾田永年私財法の目的は？", choices: ["開墾促進","税軽減","仏教普及","貴族抑制"], answer: "開墾促進" },
+  { q: "院政を始めた人物は？", choices: ["白河上皇","後白河","鳥羽","後三条"], answer: "白河上皇" },
+  { q: "守護の役割は？", choices: ["軍事警察","税徴収","外交","裁判のみ"], answer: "軍事警察" },
+  { q: "参勤交代の目的は？", choices: ["大名統制","経済発展","外交","農業"], answer: "大名統制" }
 ];
 
 let current = 0;
 let score = 0;
 
+const correctSound = document.getElementById("correctSound");
+const wrongSound = document.getElementById("wrongSound");
+
 function startGame() {
   current = 0;
   score = 0;
   document.getElementById("score").textContent = "スコア: 0";
+  document.getElementById("result").textContent = "";
   showQuestion();
 }
 
@@ -123,24 +121,33 @@ function showQuestion() {
 }
 
 function checkAnswer(choice) {
+  const resultDiv = document.getElementById("result");
+
   if (choice === questions[current].answer) {
     score++;
+    resultDiv.textContent = "⭕";
+    resultDiv.className = "correct";
+    correctSound.play();
+  } else {
+    resultDiv.textContent = "❌";
+    resultDiv.className = "wrong";
+    wrongSound.play();
   }
+
+  document.getElementById("score").textContent = "スコア: " + score;
 
   current++;
 
   if (current < questions.length) {
-    showQuestion();
+    setTimeout(showQuestion, 800);
   } else {
-    document.getElementById("question").textContent = "終了！";
-    document.getElementById("choices").innerHTML = "";
+    setTimeout(() => {
+      document.getElementById("question").textContent = "終了！";
+      document.getElementById("choices").innerHTML = "";
+    }, 800);
   }
-
-  document.getElementById("score").textContent = "スコア: " + score;
 }
 </script>
 
 </body>
 </html>
-
-
