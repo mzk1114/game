@@ -1,78 +1,145 @@
 <!DOCTYPE html>
-    let score = 0;
-    let notes = [];
-    let gameInterval;
-    let noteInterval;
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>歴史単語ゲーム</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f4f8;
+  text-align: center;
+  margin: 0;
+}
 
-    function createNote() {
-      const note = document.createElement("div");
-      note.classList.add("note");
-      note.style.top = "0px";
-      game.appendChild(note);
-      notes.push(note);
-    }
+h1 {
+  background: #2c3e50;
+  color: white;
+  padding: 15px;
+  margin: 0;
+}
 
-    function moveNotes() {
-      notes.forEach((note, index) => {
-        let top = parseInt(note.style.top);
-        note.style.top = top + 5 + "px";
+#game {
+  margin-top: 40px;
+}
 
-        if (top > 500) {
-          note.remove();
-          notes.splice(index, 1);
-        }
-      });
-    }
+#question {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
 
-    function hitNote() {
-      let hit = false;
+button.choice {
+  display: block;
+  width: 80%;
+  max-width: 300px;
+  margin: 10px auto;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  background: #3498db;
+  color: white;
+}
 
-      notes.forEach((note, index) => {
-        let top = parseInt(note.style.top);
+button.choice:hover {
+  background: #2980b9;
+}
 
-        if (top > 400 && top < 480) {
-          score++;
-          scoreDisplay.textContent = "スコア: " + score;
-          note.remove();
-          notes.splice(index, 1);
-          hit = true;
-        }
-      });
+#score {
+  margin-top: 20px;
+  font-size: 18px;
+}
 
-      if (!hit) {
-        score = Math.max(0, score - 1);
-        scoreDisplay.textContent = "スコア: " + score;
-      }
-    }
+#startBtn {
+  margin-top: 30px;
+  padding: 10px 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  background: #27ae60;
+  color: white;
+}
+</style>
+</head>
+<body>
 
-    function startGame() {
-      score = 0;
-      scoreDisplay.textContent = "スコア: 0";
+<h1>📚 高1 歴史単語ゲーム</h1>
 
-      notes.forEach(n => n.remove());
-      notes = [];
+<div id="game">
+  <div id="question">スタートを押してね！</div>
+  <div id="choices"></div>
+  <button id="startBtn" onclick="startGame()">スタート</button>
+  <div id="score">スコア: 0</div>
+</div>
 
-      clearInterval(gameInterval);
-      clearInterval(noteInterval);
+<script>
+const questions = [
+  {
+    q: "鎌倉幕府を開いた人物は？",
+    choices: ["源頼朝", "織田信長", "徳川家康", "足利尊氏"],
+    answer: "源頼朝"
+  },
+  {
+    q: "大化の改新が始まった年は？",
+    choices: ["645年", "710年", "794年", "1192年"],
+    answer: "645年"
+  },
+  {
+    q: "江戸幕府を開いたのは？",
+    choices: ["徳川家康", "豊臣秀吉", "源義経", "足利義満"],
+    answer: "徳川家康"
+  },
+  {
+    q: "平安京に都を移した天皇は？",
+    choices: ["桓武天皇", "聖武天皇", "天武天皇", "後醍醐天皇"],
+    answer: "桓武天皇"
+  }
+];
 
-      music.currentTime = 0;
-      music.play();
+let current = 0;
+let score = 0;
 
-      noteInterval = setInterval(createNote, 800);
+function startGame() {
+  current = 0;
+  score = 0;
+  document.getElementById("score").textContent = "スコア: 0";
+  showQuestion();
+}
 
-      gameInterval = setInterval(() => {
-        moveNotes();
-      }, 50);
-    }
+function showQuestion() {
+  const q = questions[current];
+  document.getElementById("question").textContent = q.q;
 
-    document.addEventListener("keydown", (e) => {
-      if (e.code === "Space") {
-        hitNote();
-      }
-    });
+  const choicesDiv = document.getElementById("choices");
+  choicesDiv.innerHTML = "";
 
-    game.addEventListener("click", hitNote);
-  </script>
+  q.choices.forEach(choice => {
+    const btn = document.createElement("button");
+    btn.textContent = choice;
+    btn.className = "choice";
+    btn.onclick = () => checkAnswer(choice);
+    choicesDiv.appendChild(btn);
+  });
+}
+
+function checkAnswer(choice) {
+  if (choice === questions[current].answer) {
+    score++;
+  }
+
+  current++;
+
+  if (current < questions.length) {
+    showQuestion();
+  } else {
+    document.getElementById("question").textContent = "終了！";
+    document.getElementById("choices").innerHTML = "";
+  }
+
+  document.getElementById("score").textContent = "スコア: " + score;
+}
+</script>
+
 </body>
 </html>
 
